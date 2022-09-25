@@ -30,7 +30,7 @@ http://www.bequgexs.com/
 http://www.tjwl.com/
 )
 
-CONFIG_FILE="、usr/local/etc/v2ray/config.json"
+CONFIG_FILE="/usr/local/etc/v2ray/config.json"
 
 OS=`hostnamectl | grep -i system | cut -d: -f2`
 
