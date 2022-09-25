@@ -100,6 +100,21 @@ function getData()
     colorEcho ${BLUE}  " 主机名(host)：$domain"
     echo ""
 
+    if [[ -f ~/v2ray.pem && -f ~/v2ray.key ]]; then
+        colorEcho ${BLUE}  " 检测到自有证书，将使用其部署"
+        echo 
+        CERT_FILE="/etc/v2ray/${domain}.pem"
+        KEY_FILE="/etc/v2ray/${domain}.key"
+    else
+        resolve=`curl -s https://hijk.art/hostip.php?d=${domain}`
+        res=`echo -n ${resolve} | grep ${IP}`
+        if [[ -z "${res}" ]]; then
+            colorEcho ${BLUE}  "${domain} 解析结果：${resolve}"
+            colorEcho ${RED}  " 主机未解析到当前服务器IP(${IP})!"
+            exit 1
+        fi
+    fi
+
     while true
     do
         read -p " 请输入伪装路径，以/开头：" path
@@ -635,4 +650,3 @@ case "$action" in
         echo " 用法: `basename $0` [install|uninstall|info]"
         ;;
 esac
-
