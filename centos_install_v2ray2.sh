@@ -108,9 +108,7 @@ function getData()
     else
         resolve=`curl -s https://hijk.art/hostip.php?d=${domain}`
         res=`echo -n ${resolve} | grep ${IP}`
-        if [[ -z "${res}" ]]; then
-
-        fi
+       
     fi
 
     while true
