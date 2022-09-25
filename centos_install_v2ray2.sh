@@ -113,7 +113,7 @@ function getData()
 #             colorEcho ${RED}  " 主机未解析到当前服务器IP(${IP})!"
 #             #exit 1
 #         fi
-    fi
+#     fi
 
     while true
     do
