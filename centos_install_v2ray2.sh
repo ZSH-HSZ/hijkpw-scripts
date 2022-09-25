@@ -100,6 +100,21 @@ function getData()
     colorEcho ${BLUE}  " 主机名(host)：$domain"
     echo ""
 
+    if [[ -f ~/v2ray.pem && -f ~/v2ray.key ]]; then
+        colorEcho ${BLUE}  " 检测到自有证书，将使用其部署"
+        echo 
+        CERT_FILE="/etc/v2ray/${domain}.pem"
+        KEY_FILE="/etc/v2ray/${domain}.key"
+    else
+        resolve=`curl -s https://hijk.art/hostip.php?d=${domain}`
+        res=`echo -n ${resolve} | grep ${IP}`
+        if [[ -z "${res}" ]]; then
+            colorEcho ${BLUE}  "${domain} 解析结果：${resolve}"
+            colorEcho ${RED}  " 主机未解析到当前服务器IP(${IP})!"
+            exit 1
+        fi
+    fi
+
     while true
     do
         read -p " 请输入伪装路径，以/开头：" path
@@ -327,31 +342,24 @@ user nginx;
 worker_processes auto;
 error_log /var/log/nginx/error.log;
 pid /run/nginx.pid;
-
 # Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
 include /usr/share/nginx/modules/*.conf;
-
 events {
     worker_connections 1024;
 }
-
 http {
     log_format  main  '\$remote_addr - \$remote_user [\$time_local] "\$request" '
                       '\$status \$body_bytes_sent "\$http_referer" '
                       '"\$http_user_agent" "\$http_x_forwarded_for"';
-
     access_log  /var/log/nginx/access.log  main;
-
     gzip                on;
     sendfile            on;
     tcp_nopush          on;
     tcp_nodelay         on;
     keepalive_timeout   65;
     types_hash_max_size 2048;
-
     include             /etc/nginx/mime.types;
     default_type        application/octet-stream;
-
     # Load modular configuration files from the /etc/nginx/conf.d directory.
     # See http://nginx.org/en/docs/ngx_core_module.html#include
     # for more information.
@@ -383,12 +391,10 @@ server {
     server_name ${domain};
     return 301 https://\$server_name:${port}\$request_uri;
 }
-
 server {
     listen       ${port} ssl http2;
     server_name ${domain};
     charset utf-8;
-
     # ssl配置
     ssl_protocols TLSv1.1 TLSv1.2;
     ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
@@ -402,14 +408,12 @@ server {
     
     # placeholder
     # placeholder
-
     root /usr/share/nginx/html;
     location / {
         $action
     }
     location = /robots.txt {
     }
-
     location ${path} {
       proxy_redirect off;
       proxy_pass http://127.0.0.1:${v2port};
