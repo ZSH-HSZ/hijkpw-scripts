@@ -111,7 +111,7 @@ function getData()
         if [[ -z "${res}" ]]; then
             colorEcho ${BLUE}  "${domain} 解析结果：${resolve}"
             colorEcho ${RED}  " 主机未解析到当前服务器IP(${IP})!"
-            exit 1
+            #exit 1
         fi
     fi
 
