@@ -109,9 +109,7 @@ function getData()
         resolve=`curl -s https://hijk.art/hostip.php?d=${domain}`
         res=`echo -n ${resolve} | grep ${IP}`
         if [[ -z "${res}" ]]; then
-            colorEcho ${BLUE}  "${domain} 解析结果：${resolve}"
-            colorEcho ${RED}  " 主机未解析到当前服务器IP(${IP})!"
-            exit 1
+
         fi
     fi
 
